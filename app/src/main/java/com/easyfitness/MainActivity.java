@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -64,7 +65,9 @@ import com.easyfitness.utils.DateConverter;
 import com.easyfitness.utils.FileNameUtil;
 import com.easyfitness.utils.ImageUtil;
 import com.easyfitness.utils.MusicController;
+import com.easyfitness.utils.SnackbarDisplayer;
 import com.easyfitness.utils.UnitConverter;
+import com.google.android.material.snackbar.Snackbar;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.onurkaganaldemir.ktoastlib.KToast;
 
@@ -575,9 +578,16 @@ public class MainActivity extends AppCompatActivity {
                 if (mpSettingFrag.getContext() != null) {
                     mpSettingFrag.updateLastBackupSummary(SP, currentTime);
                 }
-                KToast.successToast(getActivity(), getCurrentProfile().getName() + ": " + getActivity().getResources().getText(R.string.export_success) + " - " + folderName, Gravity.BOTTOM, KToast.LENGTH_LONG);
+
+                SnackbarDisplayer.success(
+                        findViewById(R.id.drawer_layout),
+                        getCurrentProfile().getName() + ": " + getActivity().getResources().getText(R.string.export_success) + " - " + folderName
+                );
             } else {
-                KToast.errorToast(getActivity(), getCurrentProfile().getName() + ": " + getActivity().getResources().getText(R.string.export_failed), Gravity.BOTTOM, KToast.LENGTH_LONG);
+                SnackbarDisplayer.error(
+                        findViewById(R.id.drawer_layout),
+                        getCurrentProfile().getName() + ": " + getActivity().getResources().getText(R.string.export_failed)
+                );
             }
             dialog.dismiss();
         });
