@@ -103,6 +103,7 @@ public class ChronoDialogbox extends Dialog implements
                         startTime = SystemClock.elapsedRealtime();
                     } else {
                         startTime = SystemClock.elapsedRealtime() - (stopTime - startTime);
+                        chronoService.setTiming_stop(stopTime);
                     }
                     chrono.setBase(startTime);
                     chrono.start();
@@ -115,6 +116,8 @@ public class ChronoDialogbox extends Dialog implements
                 startTime = SystemClock.elapsedRealtime();
                 chrono.setBase(startTime);
                 chrono.setText("00:00:0");
+                chronoService.setTiming_start(0);
+                chronoService.setTiming_stop(0);
                 System.out.println("btn_reset---------------------------");
                 chronoResetted = true;
                 break;
@@ -123,8 +126,14 @@ public class ChronoDialogbox extends Dialog implements
                 chronoStarted = false;
                 chrono.setText("00:00:0");
                 startstop.setText("Start"); */
-                chronoService.setTiming_start(startTime);
-                chronoService.setTiming_stop(stopTime);
+                if(chrono.getText().equals("00:00:0")){
+                    chronoService.setTiming_start(0);
+                    chronoService.setTiming_stop(0);
+                }else{
+                    chronoService.setTiming_start(startTime);
+                }
+
+
                 dismiss();
                 break;
             default:
