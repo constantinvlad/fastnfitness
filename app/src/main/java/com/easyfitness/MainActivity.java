@@ -82,8 +82,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipFile;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
+import javax.inject.Inject;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
@@ -141,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
     private long mBackPressed;
     private AppViMo appViMo;
 
+    @Inject
+    ClockService clockService;
+
     private final PopupMenu.OnMenuItemClickListener onMenuItemClick = item -> {
         switch (item.getItemId()) {
             case R.id.create_newprofil:
@@ -191,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        this.clockService.testmethod();
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String dayNightAuto = SP.getString("dayNightAuto", "2");
         int dayNightAutoValue;

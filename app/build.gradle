@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.dagger.hilt.android'
 
 android {
     compileSdk 33
@@ -102,4 +103,8 @@ dependencies {
     implementation 'com.github.onurkagan:ktoast:1.0.3'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     implementation 'com.github.ivbaranov:materialfavoritebutton:0.1.5'
+
+//    hilt
+    implementation 'com.google.dagger:hilt-android:2.50'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.50'
 }
