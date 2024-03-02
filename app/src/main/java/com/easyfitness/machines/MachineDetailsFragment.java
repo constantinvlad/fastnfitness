@@ -184,12 +184,11 @@ public class MachineDetailsFragment extends Fragment {
         selectedMuscles.addAll(Muscle.setFromMigratedBodyPartString(mMachine.getBodyParts()));
         machineNameArg = mMachine.getName();
 
-        if (machineNameArg.isEmpty()) {
-            machineName.setText("Default exercise");
+       if (machineNameArg.isEmpty()) {
+            machineName.setText(" ");
         } else {
             machineName.setText(machineNameArg);
         }
-
         machineDescription.setText(mMachine.getDescription());
         updateMuscleListText();
         mCurrentPhotoPath = mMachine.getPicture();
