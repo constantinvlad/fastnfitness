@@ -20,7 +20,6 @@ public class ChronoDialogbox extends Dialog implements
     public Dialog d;
     public Button startstop, exit, reset;
     public Chronometer chrono;
-    String strCurrentTime = "";
     long startTime = 0;
     long stopTime = 0;
     private boolean chronoStarted = false;
@@ -31,16 +30,15 @@ public class ChronoDialogbox extends Dialog implements
         super(a);
         this.c = a;
     }
+
     private void startChronoService() {
         mContext = getContext();
-        Intent intent = new Intent(mContext,ChronoService.class);
+        Intent intent = new Intent(mContext, ChronoService.class);
         mContext.startService(intent);
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("onCreateDialog");
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setTitle(c.getResources().getString(R.string.ChronometerLabel)); //ChronometerLabel
         setContentView(R.layout.dialog_chrono);
@@ -49,7 +47,6 @@ public class ChronoDialogbox extends Dialog implements
         startChronoService();
         ChronoService chronoService = ChronoService.getInstance();
         this.chronoService = chronoService;
-        System.out.println("valor timing al crear un nuevo dialog "+ chronoService.getTiming_start());
 
 
         startstop = findViewById(R.id.btn_startstop);
@@ -60,42 +57,39 @@ public class ChronoDialogbox extends Dialog implements
         startstop.setOnClickListener(this);
         exit.setOnClickListener(this);
         reset.setOnClickListener(this);
-        /*
-        startTime = SystemClock.elapsedRealtime();
-        chrono.setBase(SystemClock.elapsedRealtime());
-        chrono.start();
-        startTime = SystemClock.elapsedRealtime();
-        chronoStarted = true;
 
-        startstop.setText("Stop");*/
-
-        if(chronoService.getTiming_start() == 0){
+        if(chronoService.getTiming_start() == 0){//Instrancia chronoService 1º vez
+            chrono.setBase(SystemClock.elapsedRealtime());
+            chrono.start();
             startTime = SystemClock.elapsedRealtime();
+            chronoStarted = true;
+            startstop.setText("Stop");
         }else{
-            startTime = chronoService.getTiming_start();
-            if( chronoService.getTiming_stop() == 0){
-                stopTime = SystemClock.elapsedRealtime();
-            }else{
+            if(chronoService.isChronoStarted()){//se dejo en Stop
+                startTime = chronoService.getTiming_start();
                 stopTime = chronoService.getTiming_stop();
+                chrono.setBase(SystemClock.elapsedRealtime() - (stopTime - startTime));
+                chrono.stop();
+                chronoStarted = false;
+                startstop.setText("Start");
+            }else{//se dejo en Start
+                chrono.setBase(chronoService.getTiming_start());
+                chrono.start();
+                startTime = chronoService.getTiming_start();
+                chronoStarted = true;
+                startstop.setText("Stop");
             }
-            startTime = SystemClock.elapsedRealtime() - (stopTime - startTime);
-            chrono.setBase(startTime);
         }
-
-        chrono.start();
-        chronoStarted = true;
-        startstop.setText("Stop");
-
     }
 
-    @Override
+        @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_startstop:
                 if (chronoStarted) {
                     chrono.stop();
                     stopTime = SystemClock.elapsedRealtime();
-                    chronoService.setTiming_stop(stopTime);
+                    chronoService.setChronoStarted(true);
                     chronoStarted = false;
                     startstop.setText("Start");
                 } else {
@@ -103,11 +97,11 @@ public class ChronoDialogbox extends Dialog implements
                         startTime = SystemClock.elapsedRealtime();
                     } else {
                         startTime = SystemClock.elapsedRealtime() - (stopTime - startTime);
-                        chronoService.setTiming_stop(stopTime);
                     }
                     chrono.setBase(startTime);
                     chrono.start();
                     chronoStarted = true;
+                    chronoService.setChronoStarted(false);
                     startstop.setText("Stop");
                 }
                 chronoResetted = false;
@@ -116,27 +110,12 @@ public class ChronoDialogbox extends Dialog implements
                 startTime = SystemClock.elapsedRealtime();
                 chrono.setBase(startTime);
                 chrono.setText("00:00:0");
-                chronoService.setTiming_start(0);
-                chronoService.setTiming_stop(0);
-                System.out.println("btn_reset---------------------------");
                 chronoResetted = true;
                 break;
             case R.id.btn_exit:
-             /*   chrono.stop();
-                chronoStarted = false;
-                chrono.setText("00:00:0");
-                startstop.setText("Start"); */
-                if(chrono.getText().equals("00:00:0")){
-                    chronoService.setTiming_start(0);
-                    chronoService.setTiming_stop(0);
-                }else{
-                    chronoService.setTiming_start(startTime);
-                }
-
-
+                chronoService.setTiming_start(startTime);
+                chronoService.setTiming_stop(stopTime);
                 dismiss();
-                break;
-            default:
                 break;
         }
     }
